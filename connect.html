@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plutto Connect - Cronograma del Evento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0000B8 0%, #4D6BFF 50%, #A8B5FF 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0000B8 0%, #4D6BFF 50%, #A8B5FF 100%);
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: repeating-radial-gradient(
+                circle at center,
+                transparent 0px,
+                transparent 40px,
+                rgba(255,255,255,0.03) 40px,
+                rgba(255,255,255,0.03) 45px
+            );
+            animation: ripple 8s linear infinite;
+        }
+        @keyframes ripple {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+            50% { opacity: 0.15; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.3; }
+        }
+        .logo {
+            font-size: 36px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 1px;
+        }
+        .event-title {
+            font-size: 110px;
+            color: white;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+            line-height: 1;
+            letter-spacing: -3px;
+        }
+        .event-subtitle {
+            font-size: 18px;
+            color: white;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        .event-subtitle:hover {
+            opacity: 0.8;
+        }
+        .event-subtitle::after {
+            content: ':arrow_upper_right:';
+            font-size: 20px;
+        }
+        .content {
+            padding: 50px 40px;
+        }
+        .plutto-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0000B8 0%, #4D6BFF 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 24px;
+            color: #1F2937;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+        .schedule-item {
+            display: flex;
+            margin-bottom: 25px;
+            border-left: 4px solid #0000B8;
+            padding-left: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .schedule-item:hover {
+            transform: translateX(5px);
+            border-left-color: #4D6BFF;
+        }
+        .schedule-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: #0000B8;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #0000B8;
+        }
+        .time {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0000B8;
+            min-width: 180px;
+            padding-top: 3px;
+        }
+        .event-details {
+            flex: 1;
+        }
+        .event-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0000B8;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .event-speaker {
+            font-size: 15px;
+            color: #374151;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        .speaker-link {
+            color: #0000B8;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid #4D6BFF;
+            padding-bottom: 1px;
+        }
+        .speaker-link:hover {
+            color: #4D6BFF;
+            border-bottom: 2px solid #0000B8;
+        }
+        .footer {
+            background: #F9FAFB;
+            padding: 30px 40px;
+            text-align: center;
+            border-top: 1px solid #E5E7EB;
+        }
+        .footer-text {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 10px;
+        }
+        .website {
+            font-size: 16px;
+            color: #0000B8;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .website:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .header {
+                padding: 40px 20px;
+            }
+            .event-title {
+                font-size: 72px;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .schedule-item {
+                flex-direction: column;
+            }
+            .time {
+                min-width: auto;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Plutto Connect</div>
+            <div class="event-title">2025</div>
+            <a href="https://www.getplutto.com" target="_blank" class="event-subtitle">getplutto.com</a>
+        </div>
+        <div class="content">
+            <div style="text-align: center;">
+                <span class="plutto-badge">
+                    Powered by Plutto
+                </span>
+            </div>
+            <h2 class="section-title">:date: Cronograma del Evento</h2>
+            <div class="schedule-item">
+                <div class="time">:cocktail: 19:00 - 20:00</div>
+                <div class="event-details">
+                    <div class="event-name">Cocktail y networking de bienvenida</div>
+                    <div class="event-speaker">Recepción y networking inicial con todos los asistentes</div>
+                </div>
+            </div>
+            <div class="schedule-item">
+                <div class="time">:microphone: 20:00 - 20:15</div>
+                <div class="event-details">
+                    <div class="event-name">Panel 1: Plutto - IA es una burbuja</div>
+                    <div class="event-speaker">
+                        <a href="https://www.linkedin.com/in/ignaciomarquezc/" target="_blank" class="speaker-link">Ignacio Márquez</a>, Co-founder y CTO de Plutto
+                    </div>
+                </div>
+            </div>
+            <div class="schedule-item">
+                <div class="time">:briefcase: 20:15 - 20:30</div>
+                <div class="event-details">
+                    <div class="event-name">Panel 2: Oracle - El Futuro de la Gestión Empresarial</div>
+                    <div class="event-speaker">
+                        <a href="https://www.linkedin.com/in/carreen-manhey-a89827" target="_blank" class="speaker-link">Carreen Manhey</a>, Senior Director, Consumer Markets - Industry Strategy Group de Oracle<br>Duración: 15 minutos
+                    </div>
+                </div>
+            </div>
+            <div class="schedule-item">
+                <div class="time">:robot_face: 20:30 - 20:45</div>
+                <div class="event-details">
+                    <div class="event-name">Panel 3: Google - IA Aplicada a la Empresa</div>
+                    <div class="event-speaker">
+                        <a href="https://www.linkedin.com/in/cristianlopezsantillo" target="_blank" class="speaker-link">Cristian López</a>, Head of Enterprise de Google<br>Duración: 15 minutos
+                    </div>
+                </div>
+            </div>
+            <div class="schedule-item">
+                <div class="time">:coffee: 20:45 - 21:10</div>
+                <div class="event-details">
+                    <div class="event-name">Break y Premios</div>
+                    <div class="event-speaker">Pausa para networking y entrega de premios</div>
+                </div>
+            </div>
+            <div class="schedule-item">
+                <div class="time">:hospital: 21:10 - 21:30</div>
+                <div class="event-details">
+                    <div class="event-name">Panel 4: Voces de la Industria - Evolución Real de Procesos</div>
+                    <div class="event-speaker">
+                        <a href="https://www.linkedin.com/in/cristóbal-lladser-naranjo-6091922a/" target="_blank" class="speaker-link">Cristóbal Lladser</a>, Compliance Officer de Clínica Alemana<br>Duración: 20 minutos
+                    </div>
+                </div>
+            </div>
+            <div class="schedule-item">
+                <div class="time">:tada: 21:30 - 22:30</div>
+                <div class="event-details">
+                    <div class="event-name">Cierre con Cocktail y networking distendido</div>
+                    <div class="event-speaker">Networking final y despedida del evento</div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p class="footer-text">Más información sobre Plutto</p>
+            <a href="https://www.getplutto.com" target="_blank" class="website">www.getplutto.com</a>
+        </div>
+    </div>
+</body>
+</html>
+cl.linkedin.comcl.linkedin.com
+Ignacio Márquez Covarrubias - Co-Founder Plutto (YC S22) | LinkedIn
+Co-Founder Plutto (YC S22) · Passionate about music, traveling and coding. · Experiencia: Plutto (YC S22) · Educación: Y Combinator · Ubicación: Gran Santiago · Más de 500 contactos en LinkedIn. Mira el perfil de Ignacio Márquez Covarrubias en LinkedIn, una red profesional de más de 1.000 millones de miembros.
+cl.linkedin.comcl.linkedin.com
+Carreen Manhey - Oracle | LinkedIn
+Experiencia: Oracle · Ubicación: Gran Santiago · Más de 500 contactos en LinkedIn. Ver el perfil de Carreen Manhey en LinkedIn, una red profesional de más de 1.000 millones de miembros.
+cl.linkedin.comcl.linkedin.com
+Cristian López Santillo - Head of Enterprise Sales at Google Cloud | LinkedIn
+Head of Enterprise Sales at Google Cloud · I&#39;m a passionate about new technologies with a highly experience in Cloud, thinking always in the best solution that a customer needs, obsess with add value to our customers business, showing responsibility and focus on achieving goals and be a great leader for my team.
+I work always thinking big, being creative, able to develop sales strategies that incentivize the teamwork, keeping my goals clear and firm up until achieved and fulfilled. · Experience: Google · Education: IESE Business School - University of Navarra · Location: Santiago · 500+ connections on LinkedIn. View Cristian López Santillo’s profile on LinkedIn, a professional commun… Show more
+getplutto.com
+Plutto - Evaluación y gestión de riesgo de terceros
+Automatiza la gestión de riesgo de terceros, debida diligencia, cumplimiento normativo y contratos. Todo desde una sola plataforma. (520 kB)
+https://www.getplutto.com/
+
+2:49
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plutto Connect - Cronograma del Evento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0000b8 0%, #4d6bff 50%, #a8b5ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0000b8 0%, #4d6bff 50%, #a8b5ff 100%);
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: repeating-radial-gradient(
+                circle at center,
+                transparent 0px,
+                transparent 40px,
+                rgba(255,255,255,0.03) 40px,
+                rgba(255,255,255,0.03) 45px
+            );
+            animation: ripple 8s linear infinite;
+        }
+
+        @keyframes ripple {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+            50% { opacity: 0.15; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.3; }
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 1px;
+        }
+
+        .event-title {
+            font-size: 110px;
+            color: white;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+            line-height: 1;
+            letter-spacing: -3px;
+        }
+
+        .event-subtitle {
+            font-size: 18px;
+            color: white;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .event-subtitle::after {
+            content: '↗';
+            font-size: 20px;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .plutto-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0000b8 0%, #4d6bff 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .schedule-item {
+            display: flex;
+            margin-bottom: 25px;
+            border-left: 4px solid #0000b8;
+            padding-left: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-item:hover {
+            transform: translateX(5px);
+            border-left-color: #4d6bff;
+        }
+
+        .schedule-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: #0000b8;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #0000b8;
+        }
+
+        .time {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0000b8;
+            min-width: 180px;
+            padding-top: 3px;
+        }
+
+        .event-details {
+            flex: 1;
+        }
+
+        .event-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0000b8;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .event-speaker {
+            font-size: 15px;
+            color: #374151;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .speaker-link {
+            color: #0000b8;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid #4d6bff;
+            padding-bottom: 1px;
+        }
+
+        .speaker-link:hover {
+            color: #4d6bff;
+            border-bottom: 2px solid #0000b8;
+        }
+
+        .footer {
+            background: #f9fafb;
+            padding: 30px 40px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .website {
+            font-size: 16px;
+            color: #0000b8;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .website:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 40px 20px;
+            }
+
+            .event-title {
+                font-size: 72px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .schedule-item {
+                flex-direction: column;
+            }
+
+            .time {
+                min-width: auto;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Plutto Connect</div>
+            <div class="event-title">2025</div>
+            <div class="event-subtitle">getplutto.com</div>
+        </div>
+
+        <div class="content">
+            <div style="text-align: center;">
+                <span class="plutto-badge">
+                    Powered by Plutto
+                </span>
+            </div>
+            
+            <h2 class="section-title">📅 Cronograma del Evento</h2>
+
+            <div class="schedule-item">
+                <div class="time">🍸 19:00 - 20:00</div>
+                <div class="event-details">
+                    <div class="event-name">Cocktail y networking de bienvenida</div>
+                    <div class="event-speaker">Recepción y networking inicial con todos los asistentes</div>
+                </div>
+            </div>
+
+            <div class="schedule-item">
+                <div class="time">🎤 20:00 - 20:15</div>
+                <div class="event-details">
+                    <div class="event-name">Panel 1: Plutto - IA es una burbuja</div>
+                    <div class="event-speaker">
+                        <a href="https://www.linkedin.com/in/ignaciomarquezc/" target="_blank" class="speaker-link">Ignacio Márquez</a>, Co-founder y CTO de Plutto
+                    </div>
+                </div>
+            </div>
+
+            <div class="schedule-item">
+                <div class="time">💼 20:15 - 20:30</div>
+                <div class="event-details">
+                    <div class="event-name">Panel 2: Oracle - El Futuro de la Gestión Empresarial</div>
+                    <div class="event-speaker">
+                        <a href="https://www.linkedin.com/in/carreen-manhey-a89827" target="_blank" class="speaker-link">Carreen Manhey</a>, Senior Director, Consumer Markets - Industry Strategy Group de Oracle<br>Duración: 15 minutos
+                    </div>
+                </div>
+            </div>
+
+            <div class="schedule-item">
+                <div class="time">🤖 20:30 - 20:45</div>
+                <div class="event-details">
+                    <div class="event-name">Panel 3: Google - IA Aplicada a la Empresa</div>
+                    <div class="event-speaker">
+                        <a href="https://www.linkedin.com/in/cristianlopezsantillo" target="_blank" class="speaker-link">Cristian López</a>, Head of Enterprise de Google<br>Duración: 15 minutos
+                    </div>
+                </div>
+            </div>
+
+            <div class="schedule-item">
+                <div class="time">☕ 20:45 - 21:10</div>
+                <div class="event-details">
+                    <div class="event-name">Break y Premios</div>
+                    <div class="event-speaker">Pausa para networking y entrega de premios</div>
+                </div>
+            </div>
+
+            <div class="schedule-item">
+                <div class="time">🏥 21:10 - 21:30</div>
+                <div class="event-details">
+                    <div class="event-name">Panel 4: Voces de la Industria - Evolución Real de Procesos</div>
+                    <div class="event-speaker">
+                        <a href="https://www.linkedin.com/in/cristóbal-lladser-naranjo-6091922a/" target="_blank" class="speaker-link">Cristóbal Lladser</a>, Compliance Officer de Clínica Alemana<br>Duración: 20 minutos
+                    </div>
+                </div>
+            </div>
+
+            <div class="schedule-item">
+                <div class="time">🎉 21:30 - 22:30</div>
+                <div class="event-details">
+                    <div class="event-name">Cierre con Cocktail y networking distendido</div>
+                    <div class="event-speaker">Networking final y despedida del evento</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">Más información sobre Plutto</p>
+            <a href="https://www.getplutto.com" target="_blank" class="website">www.getplutto.com</a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
